@@ -155,7 +155,7 @@ if os.name == 'posix':
     # Only register SIGHUP/SIGUSR1 on *nix.
     def _sighup_handler(signo, _stack_frame):
         """Handles SIGHUP/SIGUSR1 by rehashing the PyLink daemon."""
-        log.info("Signal %s received, reloading config." % signo)
+        log.info("Señal %s recibida, recargando configuracion." % signo)
         rehash()
 
     signal.signal(signal.SIGHUP, _sighup_handler)
