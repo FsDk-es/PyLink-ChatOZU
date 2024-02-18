@@ -1,5 +1,10 @@
+ 17/02/2024
+ FsDk: Continued support in Spanish.
+# PyLink Servicios para IRC
+# En este paquete de PyLink encontrarás las traducciones y soporte para nuevas versiones UnrealIRCd.
+ 
+ 04/01/2023
 # PyLink IRC Services
-
 ## END OF LIFE NOTICE: This project is no longer maintained. So long and thanks for all the fish.
 
 <!--
@@ -93,7 +98,7 @@ These IRCds (in alphabetical order) are frequently tested and well supported. If
     - Supported channel, user, and prefix modes are negotiated on connect, but hotloading modules that change these is not supported. After changing module configuration, it is recommended to SQUIT PyLink to force a protocol renegotiation.
 * [Nefarious IRCu](https://github.com/evilnet/nefarious2) (2.0.0+) - module `p10`
     - Note: Both account cloaks (user and oper) and hashed IP cloaks are optionally supported (`HOST_HIDING_STYLE` settings 0 to 3). Make sure you configure PyLink to match your IRCd settings.
-* [UnrealIRCd](https://www.unrealircd.org/) (4.2.x - 5.0.x) - module `unreal`
+* [UnrealIRCd](https://www.unrealircd.org/) (4.2.x - 5.0.x - 6.x.x) - module `unreal`
     - Supported channel, user, and prefix modes are negotiated on connect, but hotloading modules that change these is not supported. After changing module configuration, it is recommended to SQUIT PyLink to force a protocol renegotiation.
 
 ### Extended support
