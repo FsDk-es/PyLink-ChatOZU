@@ -22,17 +22,17 @@ def remove_network(ircobj):
     del world.networkobjects[ircobj.name]
 
 def _print_remaining_threads():
-    log.debug('shutdown(): Remaining threads: %s', ['%s/%s' % (t.name, t.ident) for t in threading.enumerate()])
+    log.debug('Cerrando(): Hilos restantes.: %s', ['%s/%s' % (t.name, t.ident) for t in threading.enumerate()])
 
 def _remove_pid():
     pidfile = "%s.pid" % conf.confname
     if world._should_remove_pid:
         # Remove our pid file.
-        log.info("Removing PID file %r.", pidfile)
+        log.info("Eliminando PID archivo %r.", pidfile)
         try:
             os.remove(pidfile)
         except OSError:
-            log.exception("Failed to remove PID file %r, ignoring..." % pidfile)
+            log.exception("Error al eliminar archivo PID %r, ignorando...." % pidfile)
     else:
         log.debug('Not removing PID file %s as world._should_remove_pid is False.' % pidfile)
 

@@ -10,18 +10,18 @@ from pylinkirc import conf, structures, utils, world
 from pylinkirc.coremods import permissions
 from pylinkirc.log import log
 
-CHANNEL_DELINKED_MSG = "Channel delinked."
-RELAY_UNLOADED_MSG = "Relay plugin unloaded."
+CHANNEL_DELINKED_MSG = "Canal Deslinkado.."
+RELAY_UNLOADED_MSG = "Relay plugin Descargado.."
 
 try:
     import cachetools
 except ImportError as e:
-    raise ImportError("PyLink Relay requires cachetools as of PyLink 3.0: https://pypi.org/project/cachetools/") from e
+    raise ImportError("PyLink Relay require cachetools para PyLink 3.0: https://pypi.org/project/cachetools/") from e
 
 try:
     import unidecode
 except ImportError:
-    log.info('relay: unidecode not found; disabling unicode nicks support')
+    log.info('relay: unidecode not found; Deshabilita unicode soporte de nicks')
     USE_UNIDECODE = False
 else:
     USE_UNIDECODE = conf.conf.get('relay', {}).get('use_unidecode', True)
@@ -49,7 +49,7 @@ default_oper_permissions = {"$ircop": ['relay.create', 'relay.destroy', 'relay.l
 ### INTERNAL FUNCTIONS
 
 def initialize_all(irc):
-    """Initializes all relay channels for the given IRC object."""
+    """Inicializa todos los canales de retransmisión para el objeto IRC."""
 
     def _initialize_all():
         for chanpair, entrydata in db.items():
@@ -64,12 +64,12 @@ def initialize_all(irc):
                     initialize_channel(irc, channel)
 
     t = threading.Thread(target=_initialize_all, daemon=True,
-                         name='relay initialize_all thread from network %r' % irc.name)
+                         name='retransmitir hilo inicialize_all de la red%r' % irc.name)
     t.start()
 
 def main(irc=None):
     """Main function, called during plugin loading at start."""
-    log.debug('relay.main: loading links database')
+    log.debug('relay.main: Cargando links de base de datos.')
     datastore.load()
 
     permissions.add_default_permissions(default_permissions)
@@ -94,7 +94,7 @@ def main(irc=None):
                     'to "ip_share_pools", which provides more fine-grained control over which networks '
                     'see which networks\' IPs.')
 
-    log.debug('relay.main: finished initialization sequence')
+    log.debug('relay.main: finalizada secuencia de inicializacion.')
 
 def die(irc=None):
     """Deinitialize PyLink Relay by quitting all relay clients and saving the
@@ -127,7 +127,7 @@ def die(irc=None):
         world.services['pylink'].clear_persistent_channels(None, 'relay',
                                                            part_reason=RELAY_UNLOADED_MSG)
     except KeyError:
-        log.debug('relay.die: failed to clear persistent channels:', exc_info=True)
+        log.debug('relay.die: no se pudieron borrar los canales persistentes:', exc_info=True)
 
 IRC_ASCII_ALLOWED_CHARS = string.digits + string.ascii_letters + '^|\\-_[]{}`'
 FALLBACK_SEPARATOR = '|'
@@ -198,7 +198,7 @@ def normalize_nick(irc, netname, nick, times_tagged=0, uid=''):
                     times_tagged = 1
                     break
 
-    log.debug('(%s) relay.normalize_nick: using %r as separator.', irc.name, separator)
+    log.debug('(%s) relay.normalize_nick: usando %r como separador.', irc.name, separator)
     orig_nick = nick
     maxnicklen = irc.maxnicklen
 
@@ -254,7 +254,7 @@ def normalize_nick(irc, netname, nick, times_tagged=0, uid=''):
         # However, if a user is changing from, say, a long, cut-off nick to another long, cut-off
         # nick, we would skip tagging the nick twice if they originate from the same UID.
         times_tagged += 1
-        log.debug('(%s) relay.normalize_nick: nick %r is in use; incrementing times tagged to %s.',
+        log.debug('(%s) relay.normalize_nick: nick %r esta en uso; incrementando los tiempos etiquetados a %s.',
                   irc.name, nick, times_tagged)
         nick = normalize_nick(irc, netname, orig_nick, times_tagged=times_tagged, uid=uid)
 

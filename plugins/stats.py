@@ -47,23 +47,23 @@ def uptime(irc, source, args):
         try:
             ircobjs = {network: world.networkobjects[network]}
         except KeyError:
-            irc.error("No such network %r." % network)
+            irc.error("No existe la red %r ." % network)
             return
         if not world.networkobjects[network].connected.is_set():
-            irc.error("Network %s is not connected." % network)
+            irc.error("Network %s no esta conectado." % network)
             return
 
     current_time = int(time.time())
     time_format = conf.conf.get('stats', {}).get('time_format', DEFAULT_TIME_FORMAT)
 
-    irc.reply("PyLink uptime: \x02%s\x02 (started on %s)" %
+    irc.reply("PyLink uptime: \x02%s\x02 (comenzo en %s)" %
               (timediff(world.start_ts, current_time),
                time.strftime(time_format, time.gmtime(world.start_ts))
               )
              )
 
     for network, ircobj in sorted(ircobjs.items()):
-        irc.reply("Connected to %s: \x02%s\x02 (connected on %s)" %
+        irc.reply("Conectado a %s: \x02%s\x02 (conectado en %s)" %
                   (network,
                    timediff(ircobj.start_ts, current_time),
                    time.strftime(time_format, time.gmtime(ircobj.start_ts))
@@ -92,7 +92,7 @@ def handle_stats(irc, source, command, args):
         irc.msg(source, 'Error: %s' % e, notice=True)
         return
 
-    log.info('(%s) /STATS %s requested by %s', irc.name, stats_type, irc.get_hostmask(source))
+    log.info('(%s) /STATS %s solicitado por %s', irc.name, stats_type, irc.get_hostmask(source))
 
     def _num(num, text):
         irc.numeric(args['target'], num, source, text)
@@ -124,6 +124,6 @@ def handle_stats(irc, source, command, args):
         _num(242, ':Server Up %s' % timediff(world.start_ts, int(time.time())))
 
     else:
-        log.info('(%s) Unknown /STATS type %r requested by %s', irc.name, stats_type, irc.get_hostmask(source))
+        log.info('(%s) Unknown /STATS tipo %r solicitado por %s', irc.name, stats_type, irc.get_hostmask(source))
     _num(219, "%s :End of /STATS report" % stats_type)
 utils.add_hook(handle_stats, 'STATS')
