@@ -1,6 +1,10 @@
-# PyLink IRC Services
+ 17/02/2024
+ FsDk: Continued support in Spanish.
 # PyLink Servicios para IRC
-
+# En este paquete de PyLink encontrarás las traducciones y soporte para nuevas versiones UnrealIRCd.
+ 
+ 04/01/2023
+# PyLink IRC Services
 ## END OF LIFE NOTICE: This project is no longer maintained. So long and thanks for all the fish.
 
 <!--
