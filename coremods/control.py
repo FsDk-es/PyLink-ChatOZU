@@ -60,7 +60,7 @@ def shutdown(irc=None):
     """Shuts down the Pylink daemon."""
     if world.shutting_down.is_set():  # We froze on shutdown last time, so immediately abort.
         _print_remaining_threads()
-        raise KeyboardInterrupt("Forcing shutdown.")
+        raise KeyboardInterrupt("Forzando apagado..")
 
     world.shutting_down.set()
 
@@ -79,15 +79,15 @@ def shutdown(irc=None):
         except NotImplementedError:
             continue
 
-    log.info("Waiting for remaining threads to stop; this may take a few seconds. If PyLink freezes "
-             "at this stage, press Ctrl-C to force a shutdown.")
+    log.info("Esperando a que se detengan los subprocesos restantes; esto puede tardar unos segundos. Si PyLink se congela "
+             "en esta etapa, presione Ctrl-C para forzar un apagado.")
     _print_remaining_threads()
 
     # Done.
 
 def _sigterm_handler(signo, stack_frame):
     """Handles SIGTERM and SIGINT gracefully by shutting down the PyLink daemon."""
-    log.info("Shutting down on signal %s." % signo)
+    log.info("Apagar la señal %s." % signo)
     shutdown()
 
 signal.signal(signal.SIGTERM, _sigterm_handler)
@@ -95,7 +95,7 @@ signal.signal(signal.SIGINT, _sigterm_handler)
 
 def rehash():
     """Rehashes the PyLink daemon."""
-    log.info('Reloading PyLink configuration...')
+    log.info('Recargando configuración de PyLink...')
     old_conf = conf.conf.copy()
     fname = conf.fname
     new_conf = conf.load_conf(fname, errors_fatal=False, logger=log)
@@ -108,19 +108,19 @@ def rehash():
         for filename, config in files.items():
             _make_file_logger(filename, config.get('loglevel'))
 
-    log.debug('rehash: updating console log level')
+    log.debug('rehash: actualizar el nivel de registro de la consola')
     world.console_handler.setLevel(_get_console_log_level())
     login._make_cryptcontext()  # refresh password hashing settings
 
     for network, ircobj in world.networkobjects.copy().items():
         # Server was removed from the config file, disconnect them.
-        log.debug('rehash: checking if %r is still in new conf.', network)
+        log.debug('rehash: comprobar si %r todavía está en nueva configuración.', network)
         if ircobj.has_cap('virtual-server') or hasattr(ircobj, 'virtual_parent'):
-            log.debug('rehash: not removing network %r since it is a virtual server.', network)
+            log.debug('rehash: no eliminar la red %r ya que es un servidor virtual.', network)
             continue
 
         if network not in new_conf['servers']:
-            log.debug('rehash: removing connection to %r (removed from config).', network)
+            log.debug('rehash: Eliminando conexion a %r (eliminado de la configuracion).', network)
             remove_network(ircobj)
         else:
             # XXX: we should really just add abstraction to Irc to update config settings...
@@ -147,9 +147,9 @@ def rehash():
                 world.networkobjects[network] = newirc = proto.Class(network)
                 newirc.connect()
             except:
-                log.exception('Failed to initialize network %r, skipping it...', network)
+                log.exception('No se pudo inicializar la red %r, Saltandolo.....', network)
 
-    log.info('Finished reloading PyLink configuration.')
+    log.info('Terminada de recargar la configuración de PyLink.')
 
 if os.name == 'posix':
     # Only register SIGHUP/SIGUSR1 on *nix.
