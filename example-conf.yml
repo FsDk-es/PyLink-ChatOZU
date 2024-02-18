@@ -1,0 +1,1050 @@
+# This is a sample configuration file for PyLink. You'll likely want to rename it to pylink.yml
+# and begin your configuration there.
+
+# Note: lines starting with a "#" are comments and will be ignored.
+# Note 2: Use SPACES, NOT tabs to indent, or you will get parser errors on start!
+
+# Defines general settings for the PyLink server. Prior to PyLink 1.2, this configuration block
+# was named "bot:".
+pylink:
+    # Sets nick, user/ident, and real name.
+    nick: PyLink
+    ident: pylink
+    realname: PyLink Service Client
+
+    # Server description (shown in /links, /whois, etc.)
+    serverdesc: PyLink Server
+
+    # Sets the fantasy command prefix for the main PyLink bot. To configure fantasy prefixes for
+    # other service bots, add or modify the "prefix:" option in the configuration section of each
+    # plugin. (see the "games:" block for an example)
+    # Note: prior to PyLink 1.2, defining a prefix here made it global for all service bots. This
+    # was removed because it called all bots in a channel at once (even if they have conflicting
+    # commands), which usually leads to one successful reply and a string of "Command not found"
+    # errors.
+    # Note 2: this option REPLACES the deprecated "prefixes:" option from PyLink 1.1 and earlier.
+    prefix: "&"
+
+    # Determines whether PyLink service bots will respond to commands prefixed with their nick
+    # (requires the fantasy plugin). Prior to PyLink 1.2, this option was named "respondtonick";
+    # it was renamed for consistency. This defaults to false.
+    #respond_to_nick: true
+
+    # Determines whether PyLink service clients should protect themselves from
+    # kicks, kills, etc. using IRCd-side servprotect modes. For this to work
+    # properly, this usually requires that PyLink be U-Lined. This defaults to
+    # False.
+    #protect_services: false
+
+    # Determines whether services should default to sending command responses as private notices,
+    # even if the command was called in a channel. This defaults to False.
+    #prefer_private_replies: false
+
+    # Determines whether spawning additional services for bots (e.g. Automode, Games) should be
+    # enabled. This defaults to True, unless a network's protocol module doesn't support spawning
+    # extra service bots. If this is set to false, the other plugins' commands and channels will
+    # be merged into that of the main PyLink service bot.
+    #spawn_services: true
+
+    # Determines the default ban style that PyLink should use for setting bans (e.g. in Antispam)
+    # $ident, $host, $realhost, $ip, and $nick are among the supported substitutions here.
+    # This defaults to "*!*@$host" if not set.
+    # You should take extra caution that 1) the resulting mask is a valid nick!user@host
+    #                                    2) generated bans actually match the target user
+    #ban_style: "*!*@$host"
+    #ban_style: "*!$ident@$host"  # A possible alternative
+
+    # Defines extra directories to look up plugins and protocol modules in.
+    # Environment variables (e.g. $HOME) and home folders (~) are expanded here, in that order.
+    #plugin_dirs: ["~/my-plugins", "~/pylink-contrib-modules/plugins"]
+    #protocol_dirs: ["~/pylink-contrib-modules/protocols"]
+
+    # Determines whether service bots should return unknown command errors. Defaults to true if not
+    # speciifed.
+    #show_unknown_commands: true
+
+    # Determines whether hideoper modes should be respected in WHOIS replies.
+    # Defaults to true if not specified.
+    #whois_use_hideoper: true
+
+    # Determines whether extended WHOIS replies should be sent to users marked as a
+    # bot (usually with umode +B). For better security (i.e. with bots that track services
+    # accounts for authentication), it is recommended to leave this off.
+    #whois_show_extensions_to_bots: false
+
+    # Determines whether PyLink should return its time of initial connection when replying to WHOIS
+    # for service bots. This defaults to true if not set.
+    #whois_show_startup_time: true
+
+    # Determines how long plugins should wait (in seconds) before flushing their
+    # databases to disk. Defaults to 300 seconds. Changes here require a reload
+    # of all database-enabled plugins to take effect.
+    #save_delay: 300
+
+    # Determines whether that service bots should join preconfigured channels even if they are empty.
+    # This can also be overriden per-network via the "join_empty_channels" variable.
+    # This defaults to False if not set.
+    #join_empty_channels: false
+
+    # Determines where the plugins write their databases. The path can be relative to the directory
+    # PyLink is run from. Defaults to the current directory.
+    #data_dir: ""
+
+    # Determines where the PID file is written. The path can be relative to the directory PyLink is
+    # run from. Defaults to the current directory.
+    #pid_dir: ""
+
+login:
+    # NOTE: for users migrating from PyLink < 1.1, the old login:user/login:password settings
+    # have been deprecated. We strongly recommend migrating to the new "accounts:" block below, as
+    # it supports multiple accounts, hashed passwords, and allows more flexibility (accounts no
+    # longer imply admin access).
+
+    # IMPORTANT: If you're switching from login:user/login:password, you MUST ADD YOURSELF to a
+    # "permissions:" block like the one below, or you will lose IRC administration access to your
+    # PyLink daemon!
+    accounts:
+        # Creates an account with username "user1". You can define other usernames at the
+        # same level here (key name is user name).
+        user1:
+            # Defines the password for the user. You can encrypt passwords using the
+            # 'mkpasswd' command or the 'pylink-mkpasswd' utility included with PyLink.
+            password: "$6$rounds=81447$WlVlZYCgbnjPmVqy$28Tu/Zl0xNpePqimax2wABKn5GCoWomYEI1Pu5jqYyQNULazR4BxQmscZ0MgBHqBCCke.3u5eOtBSZwL3WwVf0"
+
+            # Determines whether the password given is encrypted. Defaults to false
+            # (plain text) for backwards compatibility.
+            encrypted: true
+
+            # Optional: allows limiting this login to users from certain networks only (case sensitive).
+            #networks: ["network1", "network2"]
+
+            # Optional: allows limiting this login to opered users
+            #require_oper: false
+
+            # Optional: requires the user to match any of the following hosts. Extended targets
+            # are supported here as well.
+            #hosts: ["*!*@localhost", "*!*@trusted.isp"]
+
+    # For ADVANCED users: adjusts settings for PyLink's default passlib CryptContext.
+    # As of PyLink 2.0.3, the default is to use pbkdf2_sha256 for new hashes, while also allowing verifying
+    # sha512_crypt for compatibility with PyLink < 2.0.3.
+    # This is configured as a dict of settings, which will be passed into the CryptContext constructor.
+    # See https://passlib.readthedocs.io/en/stable/lib/passlib.context.html for a list of valid options.
+    # Changes to this setting require a rehash to apply.
+    #cryptcontext_settings:
+        #schemes: ["pbkdf2_sha256", "sha512_crypt"]
+
+permissions:
+    # Permissions blocks in PyLink are define as a mapping of PyLink targets (i.e. hostmasks or
+    # exttargets) to lists of permission nodes. You can find a list of permissions that PyLink and
+    # its plugins define in docs/permissions-reference.md. Exttargets (extended targets) are
+    # documented further in docs/exttargets.md
+
+    # Permissions blocks look something like this:
+    #"*!user@host":
+    #    - "permission.node.1"
+    #    - "permission.node.2"
+    #    - "someplugin.*"  # Wildcards are also supported in names
+
+    # Replace ABC123 with your PyLink account name (configured above in order to give yourself admin
+    # access. As of PyLink 2.0, specifying a bare account name is synonymous with
+    # "$pylinkirc:<accountname>" (i.e. the "$pylinkirc:" prefix is implied).
+    "ABC123":
+        - "*"
+
+# This option determines whether plugin-determined default permissions should be enabled.
+# You should generally only disable this if you need to configure permissions in a specific way,
+# because it WILL break features people expect to work (e.g. access to Relay commands) unless you
+# configure that in.
+# See docs/permissions-reference.md for a list of permissions defined by PyLink's stock plugins.
+# This defaults to true if not set.
+#permissions_merge_defaults: true
+
+servers:
+    # Please note: these are only EXAMPLE link blocks. You should edit them and
+    # remove ones that you don't need in your config.
+
+    # Short name for the network. This is used for relay's nick suffixes, the
+    # network plugin's (dis)connect commands, and various other places internally.
+    # CHANGE THIS to some abbreviation representing your network; usually
+    # something 3-5 characters should be good.
+    inspnet:
+        # Server IP, port, and passwords. The ip: field also supports resolving
+        # hostnames.
+        ip: 127.0.0.1
+        port: 7000
+        recvpass: "abcd"
+        sendpass: "abcd"
+
+        # Set the bind host, useful for multi-homed hosts.
+        #bindhost: 1.2.3.4
+
+        # The full network name, used by plugins.
+        netname: "Change this"
+
+        # Hostname we will use to connect to the remote server
+        hostname: "pylink.yournet.local"
+
+        # Sets the server ID (SID) that the main PyLink server should use. For TS6-like servers
+        # (InspIRCd, Charybdis, UnrealIRCd, etc.), this must be three characters:
+        # the first char must be a digit [0-9], and the remaining two may be either uppercase
+        # letters [A-Z] or digits.
+        sid: "0PY"
+
+        # Server ID range: this specifies the range of server IDs that PyLink# may use for
+        # subservers such as Relay. On TS6, this should be a combination of digits, letters, and #'s.
+        # Each # denotes a range (0-9A-Z) of characters that can be used by PyLink to generate SIDs.
+        # You will want to make sure no other servers are using this range.
+        # There must be at least one # in this entry.
+        sidrange: "8##"
+
+        # Sets the protocol module to use for this network - see the README for a list of supported
+        # IRCds.
+        protocol: "inspircd"
+
+        # InspIRCd specific option: sets the target InspIRCd protocol version.
+        # Valid values include:
+        #  "insp3"  - InspIRCd 3.x   (1205) [DEFAULT]
+        #  "insp20" - InspIRCd 2.0.x (1202) [legacy, deprecated]
+        #target_version: insp3
+
+        # Sets the max nick length for the network. It is important that this is set correctly, or
+        # PyLink might introduce a nick that is too long and cause netsplits!
+        # This defaults to 30 if not set.
+        maxnicklen: 30
+
+        # Toggles TLS/SSL for this network - you should seriously consider using TLS in all server links
+        # for optimal security. Defaults to False if not specified.
+        ssl: true
+
+        # Optional TLS cert/key to pass to the uplink server.
+        #ssl_certfile: pylink-cert.pem
+        #ssl_keyfile: pylink-key.pem
+
+        # New in PyLink 2.0: Determines whether the target server's TLS certificate hostnames should be
+        # checked against the hostname we're set to connect to. This defaults to true for Clientbot
+        # networks and others linked to via a hostname. It depends on ssl_accept_invalid_certs being
+        # *disabled* to take effect.
+        #ssl_validate_hostname: true
+
+        # New in PyLink 2.0: When enabled, this disables TLS certificate validation on the target network.
+        # This defaults to false (bad certs are rejected) on Clientbot and true for server protocols
+        # (where bad certs are accepted). This disables the ssl_validate_hostname option, forcing it to
+        # be false.
+        #ssl_accept_invalid_certs: false
+
+        # Optionally, you can set this option to verify the TLS certificate fingerprint of your
+        # uplink. This check works independently of ssl_validate_hostname and ssl_accept_invalid_certs.
+        #ssl_fingerprint: "e0fee1adf795c84eec4735f039503eb18d9c35cc"
+
+        # This sets the hash type for the above TLS certificate fingerprint.
+        # Valid values include md5 and sha1-sha512, and others that may be supported depending on
+        # your system: see https://docs.python.org/3/library/hashlib.html
+        # This defaults to sha256 if not set.
+        #ssl_fingerprint_type: sha256
+
+        # Sets autoconnect delay - comment this out or set the value below 1 to disable autoconnect
+        # entirely.
+        autoconnect: 10
+
+        # Optional autoconnect settings:
+        # Defines whether we should multiply the autoconnect delay by a certain value every time
+        # a connection fails. This defaults to 2 if not set (30 secs becomes 60 secs, 120 secs, etc.)
+        #autoconnect_multiplier: 2
+        # Defines what the maximum autoconnect time will be (defaults to 1800 secs).
+        #autoconnect_max: 1800
+
+        # Autojoin channels. The "channels" option affects all service bots, but you can also
+        # configure channels per service using keys in the name of "<servicename>_channels"
+        # Comment out or remove these keys if you don't want service bots# to join any channels by
+        # default.
+        #channels: ["#pylink"]
+        #pylink_channels: ["#services"]
+        #automode_channels: ["#chat"]
+
+        # Encoding: allows you to override the network's encoding. This can be useful for networks
+        # using m_nationalchars or something similar. Encoding defaults to utf-8 if not set, and
+        # should be one of the standard encodings defined at
+        # https://docs.python.org/3/library/codecs.html#standard-encodings
+        # Changing this setting requires a disconnect and reconnect of the corresponding network
+        # to apply.
+        #encoding: utf-8
+
+        # Sets the ping frequency in seconds (i.e. how long we should wait between sending pings to
+        # our uplink). When more than two consecutive pings are missed, PyLink will disconnect with
+        # a ping timeout. This defaults to 90 if not set.
+        #pingfreq: 90
+
+        # If relay nick tagging is disabled, this option specifies a list of nick globs to always
+        # tag when introducing remote users *onto* this network.
+        #relay_forcetag_nicks: ["someuser", "Guest*"]
+
+        # Sets the suffix that relay subservers on this network should use. If not specified per
+        # network, this falls back to the value at relay::server_suffix, or the string "relay" if
+        # that is also not set.
+        #relay_server_suffix: "relay.yournet.net"
+
+        # Determines whether relay will tag nicks on this network. This overrides the relay::tag_nicks
+        # option on a per network-basis.
+        #relay_tag_nicks: true
+
+        # Determines the maximum size of the network's outgoing data queue (sendq), in message lines.
+        # This defaults to 4096 if not set.
+        #maxsendq: 4096
+
+        # Defines a list of "U-lined" servers that should be given special treatment when overriding
+        # modes. Relay uses this as a list of servers to IGNORE some mode changes from on a claimed
+        # channel (versus bouncing the mode back, which may be floody).
+        #ulines: ["services.example.conf"]
+
+        # InspIRCd specific option: determines whether we should display WHOIS extensions by overriding
+        # InspIRCd's default WHOIS formatting. This defaults to true for consistency with PyLink 1.x.
+        #force_whois_extensions: true
+
+    unrealnet:
+        ip: ::1
+        port: 8067
+
+        # Received and sent passwords. For passwordless links using SSL fingerprints, simply set
+        # these two fields to "*" and enable SSL with a cert and key file.
+        recvpass: "coffee"
+        sendpass: "tea"
+
+        ssl: true
+        #ssl_certfile: mycert.pem
+        #ssl_keyfile: mycert.pem
+        hostname: "pylink.example.com"
+        sid: "2PY"
+        sidrange: "8##"
+        protocol: "unreal"
+        autoconnect: 10
+
+        # Sets the full network name, used for display purposes.
+        netname: "Network name"
+
+        # You can also define network-specific nicks, idents, and hosts for various service
+        # bots, using the configuration options "servicename_nick", etc.
+        #pylink_nick: MagicServ
+        #pylink_ident: magicserv
+        #pylink_host: magicserv.mynet.net
+        #pylink_realname: Magic Link Service
+        #games_nick: MagicGames
+        #games_ident: magicgames
+        #games_host: games.mynet.net
+        #games_realname: Magic Games Service
+
+    nefarious:
+        ip: somenet.ddns.local
+        port: 45454
+
+        # When the IP field is set to a hostname, the "ipv6" option determines whether IPv4 or IPv6
+        # addresses should be used when resolving it.
+        # As of PyLink 3.1, this defaults to null, falling back to the system's default preferences
+        # if not set (e.g. /etc/gai.conf on Linux). Previous versions default to making IPv4 connections only.
+        # This option is overridden by "bindhost" if it is also provided.
+        #ipv6: null
+
+        # Specifies the IP to make outgoing connections from, for multi-homed hosts.
+        #bindhost: 1111:2222:3333:4444
+
+        # Note: if you are actually using dynamic DNS for an IRC link, consider enabling
+        # TLS/SSL certificate checking (new in 2.0). These checks are disabled by default for
+        # server links because self-signed certificates are still quite common.
+        ssl: true
+        #ssl_accept_invalid_certs: false
+        #ssl_validate_hostname: true
+
+        recvpass: "PASS123"
+        sendpass: "PASS321"
+        hostname: "pylink.somenet.ddns.local"
+
+        # For P10, the SID and SID range options correspond to P10 server numerics. The PyLink
+        # "sid" should be the numeric of the main server, and "sidrange" should be a range of
+        # numerics that subservers (e.g. for relay) can use.
+        # Make sure no other servers are in the numeric range you're reserving for PyLink, or you
+        # may get conflicts.
+        sid: 50
+        sidrange: "100-150"
+        #channels: ["#lounge"]
+        protocol: p10
+        autoconnect: 10
+        netname: "Network name"
+
+        # Configures the relay separator. Note: /'s in nicks are automatically translated to |
+        # for IRCds other than Unreal and InspIRCd, since they are not supported in nicks.
+        #separator: "|"
+
+        ### The following options are specific to P10 servers:
+        # Determines whether extended accounts should be used for this network.
+        # For Nefarious, this **MUST** match the EXTENDED_ACCOUNTS setting in your IRCd configuration.
+        # For other P10 IRCds, this should be set to FALSE.
+        use_extended_accounts: true
+
+        # Sets the IRCd type. The following options are supported here: 'nefarious', 'snircd', 'ircu',
+        # and 'generic'. This defaults to 'nefarious'.
+        # With this key set to 'nefarious', FAKE (external vHost changing) and SETHOST (host changing
+        # for PyLink / relay clients) are enabled, along with a set of modes tailored to Nefarious.
+
+        # With this key set to 'snircd', SETHOST and a set of modes tailored to snircd are enabled.
+        # Host changing for other users (e.g. via the changehost plugin) is not supported.
+
+        # With this key set to 'ircu', a set of modes tailored to IRCu is enabled.
+        # Host changing is not supported.
+
+        # With this key set to 'generic', neither of these host changing features are enabled
+        # and a baseline RFC1459 mode set is used. This configuration is not officially supported.
+
+        # (This option was previously named "p10_ircd" in PyLink 1.2, and that option name is
+        #  deprecated as of 2.0).
+        ircd: nefarious
+
+        # Determines whether account-based cloaks should be used (someone.users.yournet.org
+        # format). This setting MUST match your IRCd configuration.
+        # On Nefarious, ENABLE this if HOST_HIDING_STYLE is set to either 1 or 3.
+        # On other P10 IRCds, ENABLE this if HOST_HIDING is set to TRUE.
+        use_account_cloaks: false
+
+        # The cloak suffix to be used for account-based cloaks. This MUST match your
+        # IRCd configuration if use_account_cloaks is enabled.
+        cloak_suffix: "users.yournet.org"
+
+        ### The following options are specific to Nefarious and should be disabled unless
+        #   you're using another P10 variant explicitly supporting them:
+        # Halfop is optional in Nefarious. This setting should match your IRCd configuration.
+        use_halfop: false
+
+        # Determines whether account-based cloaks should be used for opers
+        # (someone.opers.yournet.org format). If use_account_cloaks is disabled,
+        # this will have no effect. This setting MUST match your IRCd configuration.
+        use_oper_account_cloaks: false
+
+        # The cloak suffix to be used for IRCop account-based cloaks. This MUST match your
+        # IRCd configuration if use_oper_account_cloaks is enabled.
+        oper_cloak_suffix: "staff.yournet.org"
+
+        # Determines whether UnrealIRCd-style hashed-host cloaks will be used.
+        # This setting should match your IRCd configuration.
+        # ENABLE this if HOST_HIDING_STYLE is set to either 2 or 3.
+        use_hashed_cloaks: false
+
+    ts6net:
+        ip: 1.2.3.4
+        port: 7000
+        ssl: true
+        recvpass: "abcd"
+        sendpass: "abcd"
+        hostname: "pylink.example.com"
+        sid: "8PY"
+        netname: "Network name"
+        sidrange: "8##"
+
+        protocol: "ts6"
+        autoconnect: 10
+
+        ### The following options are specific to TS6 servers:
+        # Toggles owner (+y), admin (+a), and halfop (+h) support for
+        # shadowircd/elemental-ircd/chatircd. These default to off for the best compatibility.
+        #use_owner: false
+        #use_admin: false
+        #use_halfop: false
+
+        # Sets the IRCd (channel/user mode set) to target - currently supported values include
+        # 'chatircd', 'charybdis', and 'elemental' (elemental-ircd). This option defaults to
+        # 'charybdis' if not set, and replaces the "use_elemental_modes" option from PyLink 1.2
+        # and earlier.
+        #ircd: charybdis
+
+        # Determines whether PyLink servers should be marked hidden in /links and /map.
+        # This only takes effect if the 'flatten_links' option in the IRCd is enabled.
+        # Defaults to false if not set.
+        #hidden: false
+
+    # Sample Clientbot configuration, if you want to connect PyLink as a bot to relay somewhere
+    # (or do other bot things).
+    magicnet:
+        ip: irc.somenet.local
+        port: 6697
+
+        # Optional server password.
+        #sendpass: "wastedbytes103"
+
+        netname: "Network name"
+        #channels: ["#this-works-as-usual"]
+        protocol: "clientbot"
+
+        # You can set the PyLink bot nick and ident using the "pylink_nick" and "pylink_ident" options.
+        #pylink_nick: pybot
+        #pylink_ident: pybot
+
+        # You can also define alternate fallback nicks on Clientbot. These will be used in order
+        # if successive nicks are unavailable, falling back to the default nick plus an increasing
+        # number of underscores.
+        #pylink_altnicks: ["pybot`", "pybot-"]
+
+        # TLS/SSL options. Certfile and keyfile are optional, but can be used for CertFP/SASL external
+        # where supported.
+        ssl: true
+        #ssl_certfile: mycert.pem
+        #ssl_keyfile: mycert.pem
+
+        # New in 2.0: Determines whether the target server's TLS certificate hostnames should be
+        # checked against the hostname we're set to connect to. This defaults to true for Clientbot
+        # networks and others linked to via a hostname. It depends on ssl_accept_invalid_certs being
+        # *disabled* to take effect.
+        #ssl_validate_hostname: true
+
+        # New in 2.0: When enabled, this disables TLS certificate validation on the target network.
+        # This defaults to false (bad certs are rejected) on Clientbot and true for server protocols
+        # (where bad certs are accepted). This disables the ssl_validate_hostname option,
+        # effectively forcing it to be false.
+        #ssl_accept_invalid_certs: false
+
+        # Autoconnect options work the same as on a regular network.
+        autoconnect: 30
+        #autoconnect_multiplier: 1.5
+        #autoconnect_max: 1800
+
+        # Message throttling: when set to a non-zero value, only one message will be sent every X
+        # seconds. If your bot is constantly running into Excess Flood errors, raising this to
+        # something like 0.5 or 1.0 should help. Since PyLink 2.0.2, this defaults to 0 if not set.
+        throttle_time: 0.3
+
+        # Determines whether messages from unknown clients (servers, clients not sharing in a -n
+        # channel, etc.) should be forwarded via the PyLink server. If this is disabled, these
+        # messages will be silently dropped. This overrides the "accept_weird_senders" option in the
+        # "relay:" configuration block, and defaults to True for consistency with older releases.
+        #relay_weird_senders: false
+
+        ### The following options are specific to Clientbot servers:
+        # SASL login: for mechanisms, only EXTERNAL (SSL cert) and PLAIN (username and password)
+        # are supported so far.
+        # SASL PLAIN requires the sasl_username and sasl_password options to be set, while
+        # SASL EXTERNAL requires ssl, ssl_certfile, and ssl_keyfile to work.
+        #sasl_mechanism: "PLAIN"
+        #sasl_username: "abc"
+        #sasl_password: "somestrangepassword"
+
+        # Defines the SASL timeout - this defaults to 15 seconds.
+        #sasl_timeout: 15
+
+        # If this option is enabled, the bot will attempt SASL authentication even after it's
+        # connected, as services become available throughout netsplits and reconnects.
+        # Note: This requires an IRC server capable of IRCv3.2 cap-notify and sasl:
+        # InspIRCd 3.x and charybdis 4+ are some compatible IRCds as of 2016-12-19.
+        # This defaults to false.
+        #sasl_reauth: true
+
+        # Raw IRC messages to send on connect. As of 2.0-alpha2, expansions such as $nick, $ident,
+        # and $host are also supported via Python template strings:
+        # (https://docs.python.org/3/library/string.html#template-strings)
+        #autoperform:
+        #   - "MODE $nick +B"
+        #   - "NOTICE somebody :hello, i've connected"
+
+        # Determines whether we should always attempt to rejoin channels we've been removed from.
+        # These attempts take place in the same interval as pingfreq. Defaults to false if not set.
+        #always_autorejoin: true
+
+        # Determines whether oper statuses should be tracked on this Clientbot network. This
+        # defaults to False for the best security, since oper status may allow more access to the
+        # entire PyLink service than what's desired, even when PyLink is only connected as a bot.
+        # This defaults to false if not specified.
+        #track_oper_statuses: false
+
+        # Determines whether the bot should enumerate ban/banexception/invex modes when joining channels.
+        # This is required for relay mode sync to work properly, because the bot will otherwise refuse to
+        # relay unbans (Clientbot only removes modes that it knows are set).
+        # This defaults to False because it causes extra MODE messages to be sent on connect, which can
+        # drastically slow down startup if the bot joins a lot of channels.
+        #fetch_ban_lists: true
+
+# Plugins to load (omit the .py extension)
+plugins:
+    # Commands plugin: Provides simple commands to check login status, show info on users and
+    # channels, etc.
+    - commands
+
+    # Networks plugin: Allows you to manage connections to networks while PyLink is running.
+    - networks
+
+    # Ctcp plugin: handles basic CTCP replies (VERSION, etc) towards service bots.
+    - ctcp
+
+    # Servprotect plugin: disconnects from networks if too many kills or nick collisions to
+    # PyLink clients are received. Requires the cachetools Python library.
+    - servprotect
+
+    # Relay plugin: Transparent server-side relay between channels (like Janus). See
+    # the relay: block below for configuration.
+    #- relay
+
+    # Relay Clientbot plugin: this allows channel messages and events like
+    # JOIN, PART, KICK, etc. to relay over networks using Clientbot. You will
+    # want this loaded if you're using PyLink as a relay bot.
+    #- relay_clientbot
+
+    # Fantasy plugin: Allows you to trigger commands in channels by prefixing them
+    # with the PyLink service's nick or configurable prefix characters.
+    #- fantasy
+
+    # Oper commands plugin: Provides a handful of network management commands. (KILL, JUPE, etc.)
+    #- opercmds
+
+    # Automode plugin: allows assigning channel access to specific hostmasks or
+    # exttargets. See docs/automode.md
+    # for a usage guide.
+    #- automode
+
+    # Changehost plugin: Automatically changes the hostmask (i.e. sets vHosts) on
+    # matching users as they connect. This requires the changehost: block to be
+    # configured correctly below.
+    #- changehost
+
+    # Antispam plugin: catches and punishes spammers locally and across relays as necessary.
+    # You *will need* to configure it via the "antispam:" configuration block below.
+    #- antispam
+
+    # Global plugin: Janus-style global plugin; announces messages to all channels the PyLink
+    # client is in.
+    #- global
+
+    # Bots plugin: Allows you to manipulate PyLink service bots on networks.
+    #- bots
+
+    # Servermaps plugin: displays network /map's from the PyLink server's perspective.
+    #- servermaps
+
+    # Raw plugin: Provides a 'raw' command for sending raw text to IRC.
+    # Not supported outside Clientbot networks!
+    #- raw
+
+logging:
+    # This configuration block defines targets that PyLink should log commands,
+    # errors, etc., to.
+
+    # This sets the level for console logging, which is always enabled. Valid
+    # settings include DEBUG, INFO, WARNING, ERROR, and CRITICAL: see
+    # https://docs.python.org/3/library/logging.html#logging-levels for details.
+    # Prior to PyLink 1.2, this option was erroneously named 'log:stdout', even though the actual
+    # logging output goes to stderr. That option name (log:stdout) is now *deprecated*.
+    console: INFO
+
+    channels:
+        # Logs to channels on the specified networks.
+        # Make sure that the main PyLink client is also configured to join your
+        # log channel in the "channels:" block for the relevant networks.
+
+        # Note: Log messages are forwarded over relay, so you will get duplicate
+        # messages if you add log blocks for more than one channel in one
+        # relay.
+
+        # Note 2: DEBUG logging is not supported here: any log level settings
+        # below INFO be automatically raised to INFO.
+
+        inspnet:
+            "#services":
+                loglevel: INFO
+            "#pylink-notifications":
+                loglevel: WARNING
+
+        ts6net:
+            "#services":
+                loglevel: INFO
+
+    # The directory where the log files are written. The path can be relative to the directory
+    # PyLink is run from. Defaults to "log/".
+    #log_dir: "log"
+
+    files:
+        # Logs to file targets. These will be placed in the folder specified by log_dir with a
+        # filename based on the current instance name and the target name:
+        # instancename-targetname.log
+
+        # When running with "pylink", this will create log/pylink-errors.log
+        # When running with "pylink someconf.yml", this will create log/someconf-errors.log
+        "errors":
+            loglevel: ERROR
+
+        # Ditto above. When running with "pylink", it will use log/pylink-commands.log
+        # When running with "pylink someconf.yml", this will create log/someconf-commands.log
+        "commands":
+            loglevel: INFO
+
+        # Uncomment this to enable debug logging. This is only needed if you're developing for
+        # PyLink or are requested to enable this when reporting a bug.
+        #"debug":
+        #    loglevel: DEBUG
+
+    #filerotation:
+        # Configures optional log file rotation. When enabled, PyLink will create rotate files
+        # in the format pylink-commands.log, pylink-commands.log.1, pylink-commands.log.2, etc.
+        # If either max_bytes or backup_count is 0, log rotation will be disabled.
+
+        # Max amount of bytes per file before rotation is done. Defaults to 20 MiB (20971520 bytes).
+        #max_bytes: 20971520
+
+        # Amount of backups to make. Defaults to 5.
+        #backup_count: 5
+
+changehost:
+    # This block configures the Changehost plugin. You don't need this if you
+    # aren't using it.
+
+    # Sets the networks where Changehost should be enabled. Please note: changehost does NOT support
+    # arbitrarily cloaking clients introduced by PyLink (e.g. relay clients), as doing so would make
+    # ban matching impossible. In these cases, it is the remote admin's job to turn on cloaking on
+    # their IRCd.
+    # You can also add to this list of enabled networks by setting "servers::<server name>::changehost_enable"
+    # to true.
+    enabled_nets:
+        - inspnet
+        - ts6net
+
+    # Sets the networks where Changehost hosts should be enforced: that is, any attempts
+    # by the user or other services to overwrite a host will be reverted.
+    # You can also add to this list of enabled networks by setting "servers::<server name>::changehost_enforce"
+    # to true.
+    #enforced_nets:
+    #    - inspnet
+
+    # Sets the masks that Changehost enforcement should ignore: these can be users with certain
+    # hosts, exttargets, etc.
+    # Since PyLink 2.1, you can also add to this list on a per-network basis by adding options under
+    # "servers::<server name>::changehost_enforce_exceptions".
+    enforce_exceptions:
+        - "*!*@yournet/staff/*"
+        #- "$account"
+
+    # Determines whether Changehost rules should also match the host portion of a mask by IP and
+    # real hosts. These default to false. You can override these on a per-network basis by setting
+    # "servers::<server name>::changehost_match_ip" or "servers::<server name>::changehost_match_realhosts".
+    #match_ip: false
+    #match_realhosts: false
+
+    # This sets the hostmasks that Changehost should look for. Whenever someone with a matching nick!user@host
+    # connects, their host will be set to the text defined. The following substitutions are available here:
+    # $uid, $ts (time of connection), $nick, $realhost, $ident, and $ip.
+    # Invalid characters in hosts are replaced with a "-".
+    # Also, make sure you quote each entry so the YAML parser treats them as raw strings.
+    # Since PyLink 2.1, you can also add to this list on a per-network basis by adding options under
+    # "servers::<server name>::changehost_hosts".
+    hosts:
+        # Here are some examples. Note that to keep your users' details private, you should probably refrain
+        # from using $ip or $realhost, in these hostmasks, unless cloaking is already disabled.
+        "*!yourname@*.yournet.com": "$nick.opers.yournet.com"
+        "*!*@localhost": "some-server.hostname"
+
+        # Freenode-style masks are possible with this (though without the hashing)
+        "*!*@bnc-server.yournet.com": "yournet/bnc-users/$ident"
+        "*!*@ircip?.mibbit.com": "$ident.$realhost"
+        "WebchatUser*!*@*": "webchat/users/$ident"
+
+relay:
+    # This block defines various options for the Relay plugin. You don't need this
+    # if you aren't using it.
+
+    # Determines whether all opers should be able to create, link, delink, destroy, and adjust
+    # claim settings & channel descriptions on relay channels. You can disable this if you want to
+    # configure Relay permissions in a more fine grained way, e.g. by granting each network admin
+    # their own PyLink account.
+    # This defaults to True if not set, for consistency with older (< 2.0) PyLink versions.
+    # Changing this setting requires a rehash and reload of the Relay plugin to apply.
+    allow_free_oper_links: true
+
+    # Determines whether all relay users' nicks will be tagged with their network, instead of only
+    # when a nick collision occurs. It is recommended that you either leave this on or maintain a
+    # list of nicks in "forcetag_nicks", so that your users don't complain about "nick in use"
+    # errors. This option defaults to True if not specified.
+    tag_nicks: true
+
+    # If tag_nicks is False, this specifies a list of NICK globs that network tags should be added
+    # for anyways (e.g. network services).
+    # There is also a per-network version of this option: see 'relay_forcetag_nicks'.
+    forcetag_nicks:
+        - "*Serv"
+
+    # Sets the suffix that relay subservers should use. Defaults to "relay" (as in net1.relay,
+    # net2.relay, etc.) if not specified. This can also be specified per network via the
+    # 'relay_server_suffix' option in a server block.
+    #server_suffix: "relay.yournet.net"
+
+    # Sets the default Relay separator. Defaults to / if not specified. The "separator"
+    # option in server blocks override this if specified.
+    separator: "/"
+
+    # This option defines lists of networks to relay user IPs between (instead of
+    # masking them as 0.0.0.0). If a network is in a pool (case-SENSITIVE), their
+    # opers will see the IPs from users in the rest of the pool, and the rest of
+    # the pool will receive IPs from that network too.
+    # You should generally have a consensus among your linked networks as to which
+    # network should be in which pool. A network can be part of one pool, multiple
+    # pools, or none at all.
+    # This option replaces the "relay::show_ips" and network-specific "relay_no_ips"
+    # options, which are DEPRECATED as of 2.0-beta1.
+    #ip_share_pools:
+    #    - ["net1", "net2", "net3"]
+    #    - ["net1", "meganet"]
+
+    # This option defines lists of networks that kills should be relayed between.
+    # If a network is in a pool (case-SENSITIVE), they will be able to kill users
+    # on other networks in the pool, and will also receive kills from other networks
+    # in the pool.
+    # You should generally have a consensus among your linked networks as to which
+    # network should be in which pool.
+    # When a kill is sent to a target not sharing any kill pool with the sender's network,
+    # the kill is relayed as a kick on the target to all shared channels where the sender
+    # has CLAIM access.
+    #kill_share_pools:
+    #    - ["net1", "net2", "net3"]
+
+    # This determines whether private messages & notices will be forwarded over Clientbot relay,
+    # and whether the 'rpm' command will be allowed from Clientbot networks. This defaults to
+    # False.
+    allow_clientbot_pms: false
+
+    # Sets whether Clientbot mode sync will be enabled. Valid options:
+    # "full" - Sync bans, ban/invite exceptions, prefix modes, and all RFC1459-standard modes. The
+    #          bot will need op in the Clientbot channel for this to work both ways.
+    # "half" - Sync only bans, ban/invite exceptions, and prefix modes. The bot will need op in the
+    #          Clientbot channel for this to work both ways.
+    # "none" - Turns off mode sync. This is the default.
+    #
+    # Note: when mode sync is enabled and the bot is opped, CLAIM protection will be enforced across
+    # Clientbot links as well. This means that the bot will try to revert any mode changes by non-ops
+    # or services not in the channel. The workaround is to add all Clientbot networks to the CLAIM
+    # list of any affected channels.
+    #
+    #clientbot_modesync: none
+
+    # Determines whether remote opers will have user mode +H (hideoper) set on
+    # them. This has the benefit of lowering the oper count in /lusers and
+    # /stats (P|p), but only on IRCds that support it. This defaults to true
+    # if not set.
+    hideoper: true
+
+    # Determines whether the servers disconnecting in a netsplit should be shown when
+    # relaying quits due to a netsplit. Defaults to False.
+    show_netsplits: false
+
+    # Determines whether LINKACL should use whitelist or blacklist mode by default for newly
+    # created channels. This defaults to false, and can also be specified per network via the
+    # 'relay_linkacl_use_whitelist' option in a server block.
+    #linkacl_use_whitelist: false
+
+    # Determines whether CLAIM should be enabled by default for newly created channels.
+    # This defaults to true, and can also be specified per network via the 'relay_enable_default_claim'
+    # option in a server block.
+    #enable_default_claim: true
+
+    # Optionally defines a message that should be sent to all leaf channels that a network owns, when
+    # it disconnects. This uses a template string as documented at
+    # https://docs.python.org/3/library/string.html#template-strings, with the following substitutions:
+    #     $network: the name of the network that this message is being announced to
+    #     $channel: the channel that this message is being announced to
+    #     $homenetwork: the name of the network that disconnected
+    #     $homechannel: the original name of the channel this message is being announced to
+    # If this option is empty or not set, no announcement is made.
+    #disconnect_announcement: >-
+    # Network $homenetwork has disconnected: $channel will remain open as the link is
+    # re-established, but new links will be disabled.
+
+    # Determines whether messages from unknown clients (servers, clients not sharing in a -n channel,
+    # etc.) should be forwarded via the PyLink server. If this is disabled, these messages will be
+    # silently dropped. This defaults to True for consistency with older releases.
+    #accept_weird_senders: false
+
+    # Determines whether NickServ login info should be shown in the /whois output for
+    # relay users.
+    # Valid options include "all" (show this to everyone), "opers" (show only to
+    # opers), and "none" (disabled). Defaults to none if not specified.
+    whois_show_accounts: all
+
+    # Determines whether the origin server should be shown in the /whois output for
+    # relay users.
+    # Valid options include "all" (show this to everyone), "opers" (show only to
+    # opers), and "none" (disabled). Defaults to none if not specified.
+    whois_show_server: opers
+
+#servprotect:
+    # This block configures the servprotect plugin; you don't need this if you aren't using it.
+
+    # length: How many KILL/SAVE's before a disconnect?
+    #length: 5
+
+    # age: Determines how much time (in seconds) should pass before the servprotect cache is reset.
+    # Note: updates to this option require a reload of the servprotect plugin, which automatically
+    # resets the cache.
+    #age: 10
+
+automode:
+    # The following options in this block are common to all plugins that spawn service bots (games,
+    # automode, etc.):
+
+    # Sets the nick of the Automode service, if you're using it. If not defined, this defaults to
+    # the service name ("automode" in this case).
+    nick: Automode
+    #ident: Automode
+
+    # For each service, you can also specify what prefix modes you want the service bot to join channels with.
+    # Setting this to op (+o) for Automode makes it appear more like a standard IRC service, and lessens
+    # the risk of mode overrides being dropped.
+    joinmodes: 'o'
+
+    # Determines whether a separate service bot should be spawned for this plugin. This defaults to
+    # True, unless a network's protocol module doesn't support spawning extra service bots.
+    # This option overrides the global "spawn_services" option defined in "pylink:".
+    # If this is set to False, this plugin's commands and channels will be merged into that of the
+    # main PyLink service bot.
+    #spawn_service: true
+
+    # Defines a fantasy prefix for the Automode bot (requires spawn_services to be set and the
+    # fantasy plugin to be loaded). This overrides the "prefix" option in the "pylink:" config
+    # block.
+    prefix: "@"
+
+    # Determines whether this bot should respond to its nick (requires spawn_services to be set and the
+    # fantasy plugin to be loaded). This overrides the "respond_to_nick" option in the "pylink:" config
+    # block.
+    #respond_to_nick: true
+
+    # Determines whether we should show unknown command errors for this service bot. Defaults to True.
+    # This overrides the "show_unknown_commands" option in the "pylink:" config block.
+    #show_unknown_commands: true
+
+games:
+    # Sets the nick of the Games service, if you're using it. This defaults to "games" if not defined.
+    nick: Games
+
+    # Ident, host, and realname can also be specified here, but they may be overriden per-network.
+    #ident: games
+    #host: play.games
+    #realname: Games Service
+
+    # Defines a fantasy prefix for the Games bot.
+    prefix: "./"
+
+stats:
+    # Determines the time format that the Stats plugin should use for showing dates + times.
+    # Defaults to "%a, %d %b %Y %H:%M:%S +0000" (the RFC 2812 standard) if not specified.
+    time_format: "%c"
+
+#global:
+    # Sets the text format for the global plugin, if it is loaded. This uses a template string as
+    # documented at https://docs.python.org/3/library/string.html#template-strings, with the
+    # following substitutions:
+    #     $sender: the nick of the sender
+    #     $network: the short network name of the origin network
+    #     $fullnetwork: the full network name of the origin network
+    #     $current_channel: the channel we're broadcasting on
+    #     $current_network: the network we're currently broadcasting on
+    #     $current_fullnetwork: the full name of the network we're currently broadcasting on
+    #     $text: the global text
+    #format: "[$sender@$fullnetwork] $text"
+
+    # Configures a set of channel globs to exempt from announcements. You can also add to
+    # this per network via: servers::<server name>::global_exempt_channels,
+    # the contents of which will be merged into this list.
+    #exempt_channels:
+    #    - "#*staff*"
+
+#antispam:
+    # This block configures the antispam plugin; you don't need this if you aren't using it.
+    # Antispam is automatically enabled in all channels that it's in, and you can configure
+    # its presence (like with all service bots) by setting 'antispam_channels' on the applicable
+    # networks.
+    # Antispam also integrates with relay by punishing users locally (so that bans, kills, etc.
+    # are not bounced by relay) and not relaying messages marked as spam.
+
+    # Determines the minimum level of channel access needed to be exempt from Antispam.
+    # Note: opers are automatically exempt.
+    # Valid values are "voice", "halfop", and "op". This defaults to "halfop" if not set.
+    #exempt_level: halfop
+
+    # Determines whether Antispam should strip formatting before applying filter checks.
+    # Defaults to true if not set.
+    #strip_formatting: true
+
+    #masshighlight:
+        # This block configures options for antispam's mass highlight blocking. It can also be
+        # overridden (as an entire block) per-network by copying its options to:
+        #   servers::<server name>::antispam_masshighlight
+
+        # Determines whether mass highlight prevention should be enabled. Defaults to false if not
+        # set.
+        #enabled: true
+
+        # Sets the punishment that Antispam should use against mass highlighters.
+        # Valid values include "kill", "kick", "ban", "quiet", "block", and combinations of these
+        # strung together with "+" (e.g. "kick+ban"). Defaults to "kick+ban" if not set.
+        #punishment: kick+ban
+
+        # Sets the kick / kill message used when mass highlight prevention is triggered.
+        #reason: "Mass highlight spam is prohibited"
+
+        # Sets the minimum message length and amount of nicks needed in a message for
+        # mass highlight prevention to trigger.
+        #min_length: 50
+        #min_nicks: 5
+
+    #textfilter:
+        # This block configures options for antispam's text spamfilters. It can also be overridden
+        # (as an entire block) per-network by copying its options to:
+        #   servers::<server name>::antispam_textfilter
+
+        # Determines whether text spamfilters should be enabled. Defaults to false if not set.
+        #enabled: true
+
+        # Sets the punishment that Antispam's text spamfilter should use.
+        # Valid values include "kill", "kick", "ban", "quiet", and combinations of these strung
+        # together with "+" (e.g. "kick+ban"). Defaults to "kick+ban+block" if not set.
+        # If you want to use Antispam with PM monitoring (see the "watch_pms" option below), you
+        # will want to include at least one punishment that is not channel-specific
+        # ("kill" or "block").
+        # Punishments not supported in a context or network (e.g. kicking for PM spam or "quiet"
+        # on a network that doesn't support it) will be silently dropped if others succeed.
+        # If no punishments succeed, then a warning will be logged.
+        #punishment: kick+ban+block
+
+        # Sets the kick / kill message used when a message triggers the text spamfilter.
+        #reason: "Spam is prohibited"
+
+        # Determines whether PMs to PyLink clients should also be tracked to prevent spam.
+        # Valid values include false (the boolean value), 'services', and 'all':
+        # - If this is set to false, PMs are ignored by text filtering.
+        # - If this is set to 'services', only PMs sent to services are checked for spam (this allows
+        #   them to effectively act as PM spam traps)
+        # - If this is set to 'all', all PyLink clients (including relay users) have incoming PMs
+        #   checked for spam.
+        # This defaults to false if not set.
+        #watch_pms: false
+
+    # Configures a case-insensitive list of bad strings to block in messages (PRIVMSG, NOTICE).
+    # Globs are supported; use them to your advantage here.
+    # You can also define server specific lists of bad strings by defining
+    #   servers::<server name>::antispam_textfilter_globs
+    # the contents of which will be *merged* into the global list of bad strings specified below.
+    #textfilter_globs:
+        # - "*very bad don't say this*"
+        # - "TWFkZSB5b3UgbG9vayE="
+
+    #partquit:
+        # This configures Antispam's part / quit message filter for plugins like Relay. It can also be
+        # overridden (as an entire block) per-network by copying its options to:
+        #   servers::<server name>::antispam_partquit
+
+        # Determines whether part and quit messages matching any text spamfilters will be filtered.
+        # These default to true if not set.
+        #watch_parts: false
+        #watch_quits: false
+
+        # Sets the message to use when a part or quit message is filtered.
+        #part_filter_message: Reason filtered
+        #quit_filter_message: Reason filtered
+
+    # Configures a case-insensitive list of bad strings to block in part and quit messages.
+    # Globs are supported; use them to your advantage here.
+    # You can also define server specific lists of bad strings by defining
+    #   servers::<server name>::antispam_partquit_globs
+    # the contents of which will be *merged* into the global list of bad strings specified below.
+    #partquit_globs:
+        # - "*some-spammy-site.xyz*"
